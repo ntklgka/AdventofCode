@@ -4,14 +4,14 @@
 #include <map>
 #include <iterator>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 string alphabet = "abcdefghijklmnopqrstuvwxyz";
 map<char,int> prioritymap;
 
-int main()
-{
+void exercise1(){
     for (int i = 0; i < alphabet.length() *2; i++){
         if (i<26){
             char c = alphabet.at(i);
@@ -68,4 +68,66 @@ int main()
     }
 
     cout << "Sum of Priorities is: " << sumofpriorities << endl;
+}
+
+void exercise2(){
+    for (int i = 0; i < alphabet.length() *2; i++){
+        if (i<26){
+            char c = alphabet.at(i);
+            prioritymap.insert(pair<char,int>(c, i+1));
+        }
+        else{
+            char c = toupper(alphabet.at(i%26));
+            prioritymap.insert(pair<char,int>(c, i+1));
+        }
+    }
+
+    ifstream myinput ("input.txt");
+    string mystring;
+    int sumofpriorities = 0;
+
+    int linecounter = -1;
+    string groupsacks[3] = {};
+
+    if(myinput.is_open()){
+        while(myinput){
+            getline(myinput,mystring);
+
+            if(!mystring.empty()){
+                linecounter++;
+                groupsacks[linecounter] = mystring;
+
+                //if we have 3 sacks
+                if (linecounter == 2){
+                    //get all characters that exist in the first two strings
+                    vector<char> commonchars;
+
+                    for (int i = 0; i< groupsacks[0].length(); i++){
+                        for (int j = 0; j< groupsacks[1].length(); j++){
+                            if(groupsacks[0].at(i) == groupsacks[1].at(j)){
+                                commonchars.push_back(groupsacks[0].at(i));
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i<groupsacks[2].length(); i++){
+                        if(find(commonchars.begin(), commonchars.end(), groupsacks[2].at(i)) != commonchars.end())
+                        {
+                            int priority = prioritymap.at(groupsacks[2].at(i));
+                            sumofpriorities = sumofpriorities + priority;
+                            break;
+                        } 
+                    }
+
+                    linecounter = -1;
+                }
+            }
+        }
+    }
+
+    cout << "Sum of Priorities is: " << sumofpriorities <<endl;
+}
+int main()
+{
+    exercise2();
 }
